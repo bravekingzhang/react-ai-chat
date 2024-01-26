@@ -2,6 +2,8 @@ import React from "react";
 import { View } from "react-native";
 import { makeStyles, Text, Button, useThemeMode } from "@rneui/themed";
 
+import { Link } from "expo-router";
+
 export default function App() {
   const styles = useStyles();
   const { setMode, mode } = useThemeMode();
