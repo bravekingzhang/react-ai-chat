@@ -4,6 +4,11 @@
 
 ### Usage
 
+
+### fix package
+
+       npx expo install --fix
+
 #### Stable
 
         expo init app --template @rneui/template

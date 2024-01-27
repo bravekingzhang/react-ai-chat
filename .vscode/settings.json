@@ -1,6 +1,10 @@
 {
     "cSpell.words": [
         "aibox",
-        "rneui"
-    ]
+        "reactotron",
+        "rneui",
+        "tanstack",
+        "zustand"
+    ],
+    "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }
