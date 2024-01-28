@@ -20,7 +20,7 @@ const Sessions = () => {
             bottomDivider
             key={item.id}
             onPress={() => {
-              router.replace({ pathname: "/chat", params: { id: item.id } });
+              router.navigate({ pathname: "/chat", params: { id: item.id } });
             }}
           >
             <ListItem.Content>

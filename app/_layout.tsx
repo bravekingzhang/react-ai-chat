@@ -26,6 +26,11 @@ const theme = createTheme({
 //   import("../query/reactotron");
 // }
 
+export const unstable_settings = {
+  // Ensure any route can link back to `/`
+  initialRouteName: "index",
+};
+
 export default function App() {
   const queryClient = new QueryClient();
   return (
@@ -49,7 +54,7 @@ function TabLayout() {
   return (
     <Tabs>
       <Tabs.Screen
-        name="sessions"
+        name="index"
         options={{
           title: "React AI",
           tabBarLabel: "My Chat",
@@ -76,6 +81,7 @@ function TabLayout() {
           tabBarIcon(props) {
             return <Icon name="chat" {...props} />;
           },
+          href: null,
         }}
       />
       <Tabs.Screen
