@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import { Input, Button, Icon, makeStyles, Text } from "@rneui/themed";
 import Attachment from "./Attachment";
+import UploadAttachment from "./UploadAttachment";
 
 const InputPanel = () => {
   const [text, setText] = useState("");
@@ -12,20 +13,7 @@ const InputPanel = () => {
   };
 
   // 构造几个 Attachment 数据
-  const [attachments, setAttachments] = useState<AttachmentType[]>([
-    {
-      uri: "https://picsum.photos/200/400",
-      type: "image",
-    },
-    {
-      uri: "https://picsum.photos/200/300",
-      type: "image",
-    },
-    {
-      uri: "https://picsum.photos/200/500",
-      type: "file",
-    },
-  ]);
+  const [attachments, setAttachments] = useState<AttachmentType[]>([]);
 
   const styles = useStyles();
 
@@ -66,7 +54,11 @@ const InputPanel = () => {
           display: "none",
         }}
         leftIcon={
-          <Icon name="attachment" type="material" onPress={handleAttach} />
+          <UploadAttachment
+            onUpload={(uri, type) =>
+              setAttachments([...attachments, { uri, type }])
+            }
+          />
         }
         rightIcon={
           <Icon

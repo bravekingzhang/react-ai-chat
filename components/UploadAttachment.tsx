@@ -19,28 +19,33 @@ const UploadAttachment = ({
       return;
     }
 
+    // 请求相机访问权限
+    const cameraPermissionResult =
+      await ImagePicker.requestCameraPermissionsAsync();
+    if (cameraPermissionResult.granted === false) {
+      alert("Permission to access camera is required!");
+      return;
+    }
+
     // 选择图片
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All, // 允许选择所有类型的媒体，包括图片和视频
       allowsEditing: true, // 允许编辑
-      aspect: [4, 3], // 编辑时的宽高比
       quality: 1, // 图片质量
     });
 
     if (!pickerResult.canceled) {
       // fixme: 一次传多张？
-      onUpload(
-        pickerResult.assets[0].uri,
-        pickerResult.assets[0].type || "image"
-      );
+      pickerResult.assets.forEach((asset) => {
+        onUpload(asset.uri, asset.type || "image");
+      });
     }
   };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Icon name="add" type="material" size={24} />
-        <Text style={styles.buttonText}>Upload Attachment</Text>
+        <Icon name="attachment" type="material" size={24} />
       </TouchableOpacity>
     </View>
   );
@@ -50,18 +55,13 @@ const useStyles = makeStyles((theme) => ({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    padding: theme.spacing.sm,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
-    padding: theme.spacing.sm,
-    borderRadius: 5,
   },
   buttonText: {
     color: "white",
-    marginLeft: theme.spacing.sm,
   },
 }));
 

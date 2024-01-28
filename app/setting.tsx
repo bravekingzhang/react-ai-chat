@@ -33,11 +33,12 @@ const Settings: React.FunctionComponent<ListItemProps> = () => {
           <>
             <View style={styles.list}>
               <ListItem bottomDivider>
-                <ListItem.Content>
+                <ListItem.Content style={{ flex: 0 }}>
                   <ListItem.Title>Api key</ListItem.Title>
                 </ListItem.Content>
                 <ListItem.Input
                   placeholder="Please type your api key here"
+                  style={styles.input}
                   multiline
                   onChange={(e) => setApiKey(e.nativeEvent.text)}
                   defaultValue={apiKey}
@@ -45,12 +46,13 @@ const Settings: React.FunctionComponent<ListItemProps> = () => {
                 />
               </ListItem>
               <ListItem bottomDivider>
-                <ListItem.Content>
+                <ListItem.Content style={{ flex: 0 }}>
                   <ListItem.Title>Base url</ListItem.Title>
                 </ListItem.Content>
                 <ListItem.Input
                   placeholder="starts with https://"
                   multiline
+                  style={styles.input}
                   defaultValue={baseURL}
                   onChange={(e) => setBaseURL(e.nativeEvent.text)}
                 />
@@ -69,11 +71,11 @@ const Settings: React.FunctionComponent<ListItemProps> = () => {
                   }}
                 />
               </ListItem>
-              <ListItem bottomDivider>
+              {/* <ListItem bottomDivider>
                 <ListItem.Content>
                   <Completion></Completion>
                 </ListItem.Content>
-              </ListItem>
+              </ListItem> */}
             </View>
           </>
         }
@@ -91,6 +93,9 @@ const useStyles = makeStyles((theme) => {
     list: {
       borderTopWidth: 1,
       borderColor: theme.colors.background,
+    },
+    input: {
+      fontSize: 15,
     },
     subtitleView: {
       flexDirection: "row",
