@@ -10,7 +10,7 @@ interface SessionStore {
 }
 
 // persist session settings,fixme
-const useSessionStore = create<SessionStore, any>(
+const useChatSessionStore = create<SessionStore, any>(
   persist(
     (set) => ({
       sessions: [],
@@ -29,4 +29,4 @@ const useSessionStore = create<SessionStore, any>(
   )
 );
 
-export default useSessionStore;
+export default useChatSessionStore;

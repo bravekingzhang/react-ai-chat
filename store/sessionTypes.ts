@@ -25,7 +25,6 @@ export interface SessionSetting {
 }
 export interface Session {
   id: string;
-  model: string;
   name: string;
   settings: SessionSetting; // 根据需要定义更具体的类型
   messages: Message[];
