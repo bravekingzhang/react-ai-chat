@@ -8,7 +8,6 @@ import {
   makeStyles,
 } from "@rneui/themed";
 import useSettingsStore from "../store/settingsStore";
-import Completion from "../components/Completion";
 
 const Settings: React.FunctionComponent<ListItemProps> = () => {
   const { setMode, mode } = useThemeMode();

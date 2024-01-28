@@ -12,7 +12,7 @@ import { Stack } from "expo-router/stack";
 import { Platform } from "react-native";
 import useSettingsStore from "../store/settingsStore";
 import React from "react";
-import { Tabs } from "expo-router";
+import { Tabs, router } from "expo-router";
 
 const theme = createTheme({
   lightColors: {},
@@ -37,81 +37,44 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         {Platform.OS === "web" && <ReactQueryDevtools />}
-        <TabLayout />
+        <Stack>
+          <Stack.Screen
+            name="index"
+            options={{
+              title: "Chats",
+              headerRight(props) {
+                return (
+                  <Icon
+                    name="cog"
+                    type="font-awesome"
+                    onPress={() => {
+                      router.navigate("setting");
+                    }}
+                  />
+                );
+              },
+            }}
+          />
+          <Stack.Screen
+            name="chat"
+            options={{
+              title: "Chat",
+              headerRight(props) {
+                return (
+                  <Icon
+                    name="cog"
+                    type="font-awesome"
+                    onPress={() => {
+                      router.navigate("chatSetting");
+                    }}
+                  />
+                );
+              },
+            }}
+          />
+          <Stack.Screen name="setting" options={{ title: "Settings" }} />
+        </Stack>
       </QueryClientProvider>
     </ThemeProvider>
   );
 }
-
-function TabLayout() {
-  const styles = useStyles();
-  const { themeMode } = useSettingsStore();
-  const { setMode } = useThemeMode();
-  React.useEffect(() => {
-    console.log(`Setting`, themeMode);
-    setMode(themeMode);
-  }, [themeMode]);
-  return (
-    <Tabs>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "React AI",
-          tabBarLabel: "My Chat",
-          headerStyle: styles.headerStyle,
-          headerTitleStyle: styles.headerTitleStyle,
-          tabBarItemStyle: {
-            backgroundColor: useTheme().theme.colors.background,
-          },
-          tabBarIcon(props) {
-            return <Icon name="chat" {...props} />;
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="chat"
-        options={{
-          title: "Completion",
-          tabBarLabel: "Completion",
-          headerStyle: styles.headerStyle,
-          headerTitleStyle: styles.headerTitleStyle,
-          tabBarItemStyle: {
-            backgroundColor: useTheme().theme.colors.background,
-          },
-          tabBarIcon(props) {
-            return <Icon name="chat" {...props} />;
-          },
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="setting"
-        options={{
-          title: "Settings",
-          tabBarLabel: "Settings",
-          headerStyle: styles.headerStyle,
-          headerTitleStyle: styles.headerTitleStyle,
-          tabBarItemStyle: {
-            backgroundColor: useTheme().theme.colors.background,
-          },
-          tabBarIconStyle: {
-            color: useTheme().theme.colors.secondary,
-          },
-          tabBarInactiveTintColor: useTheme().theme.colors.grey2,
-          tabBarActiveTintColor: useTheme().theme.colors.primary,
-          tabBarIcon(props) {
-            return <Icon name="settings" {...props} />;
-          },
-        }}
-      />
-    </Tabs>
-  );
-}
-const useStyles = makeStyles((theme) => ({
-  headerStyle: {
-    backgroundColor: theme.colors.background,
-  },
-  headerTitleStyle: {
-    color: theme.colors.grey2,
-  },
-}));
