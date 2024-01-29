@@ -1,23 +1,55 @@
 // CreateSessionComponent.tsx
 import React from "react";
 import useSessionStore from "../store/sessionStore";
-import { Button } from "@rneui/themed";
+import { FAB, makeStyles } from "@rneui/themed";
+import { Model, ModelKeys } from "../store/sessionTypes";
 
 const NewSession: React.FC = () => {
   const createSession = useSessionStore((state) => state.createSession);
 
+  const styles = useStyles();
+
   const handleCreateSession = () => {
     const newSession = {
       id: Date.now().toString(), // 使用字符串 ID
-      model: "your-model",
       name: "闲聊",
-      settings: {}, // 定义具体的设置
+      settings: {
+        model: "gpt-3.5-turbo" as ModelKeys,
+        temperature: 0.9,
+        top_p: 1,
+        max_tokens: 150,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      }, // 定义具体的设置
       messages: [],
     };
     createSession(newSession);
   };
 
-  return <Button onPress={handleCreateSession}>Create New Session</Button>;
+  return (
+    <FAB
+      icon={{ name: "add", color: styles.container.backgroundColor }}
+      onPress={handleCreateSession}
+      style={styles.fabStyle}
+    />
+  );
 };
 
 export default NewSession;
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  fabStyle: {
+    position: "absolute",
+    margin: 16,
+    color: theme.colors.primary,
+    right: 0,
+    bottom: 0,
+  },
+  list: {
+    flex: 1,
+  },
+}));

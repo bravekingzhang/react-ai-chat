@@ -1,129 +1,161 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet, Button } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 import { Picker } from "@react-native-picker/picker";
-import useChatSessionStore from "../store/chatSettingStore"; // 假设你有一个 Zustand store 来管理会话状态
+import { ListItem, Button, Input, makeStyles } from "@rneui/themed";
+import useChatSessionStore from "../store/sessionStore";
+import {
+  ModelKeys,
+  SessionSetting,
+  getModelOptions,
+} from "../store/sessionTypes";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { router } from "expo-router";
 
 const ChatSettings: React.FC = () => {
   const { updateSessionSettings, currentSessionId } = useChatSessionStore();
-
-  // 假设 currentSessionId 是当前选中会话的 ID
   const session = useChatSessionStore((state) =>
     state.sessions.find((session) => session.id === currentSessionId)
   );
 
-  const [model, setModel] = React.useState(
-    session?.settings.model || "gpt-3.5-turbo"
+  console.log("session", session);
+
+  const [settings, setSettings] = useState<SessionSetting>(
+    session?.settings || {
+      model: "gpt-3.5-turbo" as ModelKeys,
+      temperature: 0.7,
+      max_tokens: 100,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    }
   );
-  const [temperature, setTemperature] = React.useState(
-    session?.settings.temperature.toString() || "0"
-  );
-  const [maxTokens, setMaxTokens] = React.useState(
-    session?.settings.max_tokens.toString() || "0"
-  );
-  const [topP, setTopP] = React.useState(
-    session?.settings.top_p.toString() || "0"
-  );
-  const [frequencyPenalty, setFrequencyPenalty] = React.useState(
-    session?.settings.frequency_penalty.toString() || "0"
-  );
-  const [presencePenalty, setPresencePenalty] = React.useState(
-    session?.settings.presence_penalty.toString() || "0"
-  );
+
+  const updateSetting = <K extends keyof SessionSetting>(
+    key: K,
+    value: SessionSetting[K]
+  ) => {
+    setSettings((prevSettings) => ({ ...prevSettings, [key]: value }));
+  };
 
   const handleSaveSettings = () => {
     if (currentSessionId) {
-      updateSessionSettings(currentSessionId, {
-        model,
-        temperature: parseFloat(temperature),
-        max_tokens: parseInt(maxTokens, 10),
-        top_p: parseFloat(topP),
-        frequency_penalty: parseFloat(frequencyPenalty),
-        presence_penalty: parseFloat(presencePenalty),
-      });
+      updateSessionSettings(currentSessionId, settings);
+    }
+    router.back();
+  };
+
+  const settingItems = [
+    {
+      key: "model",
+      label: "Model",
+      type: "picker",
+      options: getModelOptions(),
+    },
+    { key: "temperature", label: "Temperature", type: "input" },
+    { key: "max_tokens", label: "Max Tokens", type: "input" },
+    { key: "top_p", label: "Top P", type: "input" },
+    { key: "frequency_penalty", label: "Frequency Penalty", type: "input" },
+    { key: "presence_penalty", label: "Presence Penalty", type: "input" },
+  ];
+
+  const styles = useStyles();
+
+  const renderItem = ({ item }) => {
+    switch (item.type) {
+      case "picker":
+        return (
+          <ListItem bottomDivider>
+            <ListItem.Content style={styles.content}>
+              <ListItem.Title>{item.label}</ListItem.Title>
+              <Picker
+                selectedValue={settings[item.key]}
+                onValueChange={(value) => updateSetting(item.key, value)}
+                style={styles.picker}
+              >
+                {item.options.map((option) => (
+                  <Picker.Item
+                    label={option.label}
+                    value={option.value}
+                    key={option.value}
+                  />
+                ))}
+              </Picker>
+            </ListItem.Content>
+          </ListItem>
+        );
+      case "input":
+        return (
+          <ListItem bottomDivider>
+            <ListItem.Content style={styles.content}>
+              <ListItem.Title style={styles.title}>{item.label}</ListItem.Title>
+              <Input
+                onChangeText={(value) => updateSetting(item.key, value)}
+                value={settings[item.key]?.toString()}
+                keyboardType="numeric"
+                containerStyle={styles.inputContainer}
+                inputContainerStyle={styles.input}
+                errorStyle={styles.inputError}
+              />
+            </ListItem.Content>
+          </ListItem>
+        );
+      default:
+        return null;
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Chat Settings</Text>
-
-      <Text>Model</Text>
-      <Picker
-        selectedValue={model}
-        onValueChange={(itemValue) => setModel(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="GPT-3.5 Turbo" value="gpt-3.5-turbo" />
-        <Picker.Item label="GPT-3.5" value="gpt-3.5" />
-        <Picker.Item label="GPT-3" value="gpt-3" />
-        <Picker.Item label="GPT-4" value="gpt-4" />
-        <Picker.Item label="Gemini Pro" value="gemini-pro" />
-        <Picker.Item label="Gemini Pro Vision" value="gemini-pro-vision" />
-      </Picker>
-
-      <Text>Temperature</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setTemperature}
-        value={temperature}
-        keyboardType="numeric"
+    <GestureHandlerRootView style={styles.container}>
+      <FlatList
+        data={settingItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.key}
+        ListFooterComponent={
+          <Button
+            title="Save Settings"
+            onPress={handleSaveSettings}
+            containerStyle={styles.buttonContainer}
+            radius={5}
+            type="outline"
+          />
+        }
       />
-
-      <Text>Max Tokens</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setMaxTokens}
-        value={maxTokens}
-        keyboardType="numeric"
-      />
-
-      <Text>Top P</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setTopP}
-        value={topP}
-        keyboardType="numeric"
-      />
-
-      <Text>Frequency Penalty</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setFrequencyPenalty}
-        value={frequencyPenalty}
-        keyboardType="numeric"
-      />
-
-      <Text>Presence Penalty</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setPresencePenalty}
-        value={presencePenalty}
-        keyboardType="numeric"
-      />
-
-      <Button title="Save Settings" onPress={handleSaveSettings} />
-    </View>
+    </GestureHandlerRootView>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((theme) => ({
   container: {
-    padding: 20,
+    flex: 1,
+  },
+  content: {
+    backgroundColor: theme.colors.grey5,
+    padding: theme.spacing.md,
+    borderRadius: theme.spacing.md,
+    paddingBottom: theme.spacing.xs,
   },
   title: {
-    fontSize: 20,
+    fontSize: 13,
     fontWeight: "bold",
-    marginBottom: 20,
   },
   picker: {
-    marginBottom: 20,
+    width: "100%",
+  },
+  inputContainer: {
+    paddingHorizontal: 0,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "gray",
-    marginBottom: 20,
-    padding: 10,
+    marginBottom: 0,
   },
-});
+  inputError: {
+    display: "none",
+  },
+  buttonContainer: {
+    margin: theme.spacing.md,
+    padding: theme.spacing.lg,
+    borderRadius: theme.spacing.md,
+  },
+}));
 
 export default ChatSettings;

@@ -20,7 +20,10 @@ const Sessions = () => {
             bottomDivider
             key={item.id}
             onPress={() => {
-              router.navigate({ pathname: "/chat", params: { id: item.id } });
+              router.navigate({
+                pathname: "/chat",
+                params: { currentSessionId: item.id },
+              });
             }}
           >
             <ListItem.Content>
@@ -33,6 +36,7 @@ const Sessions = () => {
         keyExtractor={(item) => item.id}
         style={styles.list}
       />
+      <NewSession />
     </View>
   ) : (
     <NewSession />

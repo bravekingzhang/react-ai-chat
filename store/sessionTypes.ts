@@ -4,24 +4,30 @@ type role = "system" | "assistant" | "user";
 export interface Message {
   role: role;
   content: string;
-  timestamp: string;
+  timestamp: number;
 }
 
-type Mode =
-  | "gpt-3.5-turbo"
-  | "gpt-3.5"
-  | "gpt-3"
-  | "gpt-4"
-  | "gemini-pro"
-  | "gemini-pro-vision";
+export const Model = {
+  Gpt3_5Turbo: "gpt-3.5-turbo",
+  Gpt3_5: "gpt-3.5",
+  Gpt3: "gpt-3",
+  Gpt4: "gpt-4",
+  GeminiPro: "gemini-pro",
+  GeminiProVision: "gemini-pro-vision",
+} as const;
 
+export type ModelKeys = keyof typeof Model;
 export interface SessionSetting {
-  model: Mode;
+  model: ModelKeys;
   temperature: number;
   max_tokens: number;
   top_p: number;
   frequency_penalty: number;
   presence_penalty: number;
+}
+
+export function getModelOptions(): { label: string; value: string }[] {
+  return Object.values(Model).map((model) => ({ label: model, value: model }));
 }
 export interface Session {
   id: string;

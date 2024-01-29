@@ -4,7 +4,12 @@ import { Input, Button, Icon, makeStyles, Text } from "@rneui/themed";
 import Attachment from "./Attachment";
 import UploadAttachment from "./UploadAttachment";
 
-const InputPanel = () => {
+const InputPanel = ({
+  onSendMessage,
+}: {
+  onSendMessage: (text: string) => void;
+  onSendAttachmentMessage?: (uri: string, type: string, text: string) => void;
+}) => {
   const [text, setText] = useState("");
 
   type AttachmentType = {
@@ -19,7 +24,7 @@ const InputPanel = () => {
 
   const handleSend = () => {
     // 发送文本逻辑
-    console.log("Sending Text: ", text);
+    onSendMessage(text);
     setText("");
   };
 
@@ -61,12 +66,16 @@ const InputPanel = () => {
           />
         }
         rightIcon={
-          <Icon
-            name="send"
-            type="material"
-            iconStyle={{ alignSelf: "baseline" }}
-            onPress={handleSend}
-          />
+          text.length > 0 ? (
+            <Icon
+              name="send"
+              type="material"
+              iconStyle={{ alignSelf: "baseline" }}
+              onPress={handleSend}
+            />
+          ) : (
+            <></>
+          )
         }
       />
     </View>
