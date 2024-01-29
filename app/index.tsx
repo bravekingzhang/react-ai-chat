@@ -31,6 +31,7 @@ const Sessions = () => {
                 params: { currentSessionId: item.id },
               });
             }}
+            leftWidth={0}
             rightContent={(reset) => (
               <Button
                 title="Delete"

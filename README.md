@@ -1,26 +1,29 @@
-# @rneui/template
+# react-ai-box
 
-## React Native Elements Expo Template
+基于 react-native 的 AI 盒子，用于学习 react-native
+
+- ui 组件库  react-native-elements
+- 状态管理 zustand
+- 路由 expo-router
+- 网络请求 tanstack / react-query
+- 本地缓存 async-storage
 
 ### Usage
 
 
 ### fix package
 
-       npx expo install --fix
+```bash
+npx expo install --fix
+```
 
-#### Stable
+### run
 
-        expo init app --template @rneui/template
+```bash
+npx expo start
+```
 
-#### Stable Typescript
+## todo
 
-        expo init app --template @rneui/template@ts
-
-#### Bleeding Edge (Experimental)
-
-        expo init app --template @rneui/template@edge
-
-#### Bleeding Edge Typescript (Experimental)
-
-        expo init app --template @rneui/template@edge-ts
+[ ] 支持流式响应输出
+[ ] 支持命名对话+自动命名对话
