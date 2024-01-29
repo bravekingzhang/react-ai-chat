@@ -10,9 +10,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Stack } from "expo-router/stack";
 import { Platform } from "react-native";
-import useSettingsStore from "../store/settingsStore";
 import React from "react";
-import { Tabs, router } from "expo-router";
+import { router } from "expo-router";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 const theme = createTheme({
   lightColors: {},
@@ -26,54 +26,56 @@ const theme = createTheme({
 //   import("../query/reactotron");
 // }
 
-export const unstable_settings = {
-  // Ensure any route can link back to `/`
-  initialRouteName: "index",
-};
+// export const unstable_settings = {
+//   // Ensure any route can link back to `/`
+//   initialRouteName: "index",
+// };
 
+const queryClient = new QueryClient();
 export default function App() {
-  const queryClient = new QueryClient();
   return (
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         {Platform.OS === "web" && <ReactQueryDevtools />}
-        <Stack>
-          <Stack.Screen
-            name="index"
-            options={{
-              title: "Chats",
-              headerRight(props) {
-                return (
-                  <Icon
-                    name="cog"
-                    type="font-awesome"
-                    onPress={() => {
-                      router.navigate("setting");
-                    }}
-                  />
-                );
-              },
-            }}
-          />
-          <Stack.Screen
-            name="chat"
-            options={{
-              title: "Chat",
-              headerRight(props) {
-                return (
-                  <Icon
-                    name="cog"
-                    type="font-awesome"
-                    onPress={() => {
-                      router.navigate("chatSetting");
-                    }}
-                  />
-                );
-              },
-            }}
-          />
-          <Stack.Screen name="setting" options={{ title: "Settings" }} />
-        </Stack>
+        <RootSiblingParent>
+          <Stack>
+            <Stack.Screen
+              name="index"
+              options={{
+                title: "Chats",
+                headerRight(props) {
+                  return (
+                    <Icon
+                      name="cog"
+                      type="font-awesome"
+                      onPress={() => {
+                        router.navigate("setting");
+                      }}
+                    />
+                  );
+                },
+              }}
+            />
+            <Stack.Screen
+              name="chat"
+              options={{
+                title: "Chat",
+                headerRight(props) {
+                  return (
+                    <Icon
+                      name="cog"
+                      type="font-awesome"
+                      onPress={() => {
+                        router.navigate("chatSetting");
+                      }}
+                    />
+                  );
+                },
+              }}
+            />
+            <Stack.Screen name="setting" options={{ title: "Settings" }} />
+          </Stack>
+        </RootSiblingParent>
       </QueryClientProvider>
     </ThemeProvider>
   );

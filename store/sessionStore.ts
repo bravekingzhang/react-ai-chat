@@ -9,6 +9,7 @@ interface SessionState {
   setCurrentSessionId: (sessionId: string | null) => void;
   updateSessionSettings: (sessionId: string, settings: SessionSetting) => void;
   createSession: (session: Session) => void;
+  deleteSession: (sessionId: string) => void;
   addMessageToSession: (sessionId: string, message: Message) => void;
 }
 
@@ -17,6 +18,13 @@ const useSessionStore = create<SessionState, any>(
     (set) => ({
       sessions: [],
       currentSessionId: null,
+      deleteSession: (sessionId) => {
+        set((state) => ({
+          sessions: state.sessions.filter(
+            (session) => session.id !== sessionId
+          ),
+        }));
+      },
 
       setCurrentSessionId: (sessionId) => set({ currentSessionId: sessionId }),
 
