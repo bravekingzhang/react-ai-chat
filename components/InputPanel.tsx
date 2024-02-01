@@ -6,9 +6,10 @@ import UploadAttachment from "./UploadAttachment";
 
 const InputPanel = ({
   onSendMessage,
+  onSendAttachmentMessage,
 }: {
   onSendMessage: (text: string) => void;
-  onSendAttachmentMessage?: (uri: string, type: string, text: string) => void;
+  onSendAttachmentMessage?: (imageUrl: string, text: string) => void;
 }) => {
   const [text, setText] = useState("");
 
@@ -22,15 +23,13 @@ const InputPanel = ({
 
   const styles = useStyles();
 
-  const handleSend = () => {
+  const handleSend = async () => {
     // 发送文本逻辑
-    onSendMessage(text);
+    attachments.length <= 0
+      ? onSendMessage(text)
+      : onSendAttachmentMessage?.(attachments[0].uri, text);
     setText("");
-  };
-
-  const handleAttach = () => {
-    // 附件添加逻辑
-    console.log("Attach file");
+    setAttachments([]);
   };
 
   return (

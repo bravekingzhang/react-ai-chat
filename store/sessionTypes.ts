@@ -3,20 +3,33 @@
 type role = "system" | "assistant" | "user";
 export interface Message {
   role: role;
-  content: string;
+  content: Content[];
   timestamp: number;
+}
+
+type ContentType =
+  | "text"
+  | "image_url"
+  | "image-base64"
+  | "video_url"
+  | "audio_url"
+  | "file_url"
+  | "custom";
+export interface Content {
+  type: ContentType;
+  text: string;
 }
 
 export const Model = {
   Gpt3_5Turbo: "gpt-3.5-turbo",
-  Gpt3_5: "gpt-3.5",
-  Gpt3: "gpt-3",
   Gpt4: "gpt-4",
   GeminiPro: "gemini-pro",
   GeminiProVision: "gemini-pro-vision",
 } as const;
 
 export type ModelKeys = keyof typeof Model;
+
+export type ModelValues = (typeof Model)[ModelKeys];
 export interface SessionSetting {
   model: ModelKeys;
   temperature: number;

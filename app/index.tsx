@@ -45,9 +45,6 @@ const Sessions = () => {
               <ListItem.Title>
                 <Text>{item.name}</Text>
               </ListItem.Title>
-              <ListItemContent>
-                <Text>{item.messages[0]?.content}</Text>
-              </ListItemContent>
               <ListItemSubtitle>
                 <Text>{item.messages.length} messages</Text>
               </ListItemSubtitle>

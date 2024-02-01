@@ -1,6 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { View, FlatList, ScrollView } from "react-native";
-import { ListItem, makeStyles } from "@rneui/themed";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import {
+  View,
+  FlatList,
+  ScrollView,
+  ActivityIndicator,
+  Animated,
+  Easing,
+  Image,
+} from "react-native";
+import { ListItem, Text, makeStyles, useTheme } from "@rneui/themed";
 import InputPanel from "../components/InputPanel"; // 确保正确导入 InputPanel 组件
 import { useLocalSearchParams } from "expo-router";
 import useSessionStore from "../store/sessionStore";
@@ -9,13 +17,20 @@ import { ImageBackground } from "react-native";
 import { fetchOpenAiCompletion } from "../query/completion";
 import { useMutation } from "@tanstack/react-query";
 import Toast from "react-native-root-toast";
-import Markdown from "react-native-markdown-display";
+import Markdown, {
+  AstRenderer,
+  RenderFunction,
+  RenderRules,
+} from "react-native-markdown-display";
+
+import { useMarkdownStyles } from "../styles/markdown";
 
 const ChatScreen = () => {
   const { currentSessionId } = useLocalSearchParams<{
     currentSessionId?: string;
   }>();
 
+  const flatListRef = useRef<FlatList>(null);
   const { setCurrentSessionId, addMessageToSession } = useSessionStore();
 
   // 取出当前会话的session
@@ -30,17 +45,18 @@ const ChatScreen = () => {
   }, [currentSessionId]);
 
   // 设置 useMutation 钩子
-  const { mutate, isPending, error } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: fetchOpenAiCompletion,
     onSuccess: (data) => {
       // 处理响应数据，例如将响应的消息添加到会话中
+      console.log("data", data.choices[0].message.content);
       if (currentSessionId) {
         addMessageToSession(currentSessionId, {
           role: "assistant",
-          content: data.choices[0].message.content, // 根据响应结构调整
+          content: [{ type: "text", text: data.choices[0].message.content }],
           timestamp: new Date().getTime(),
         });
-        // queryClient.invalidateQueries(['messages']);
+        flatListRef.current?.scrollToEnd();
       }
     },
     onError(error) {
@@ -59,17 +75,50 @@ const ChatScreen = () => {
     console.log("Sending Text: ", text);
     addMessageToSession(currentSessionId, {
       role: "user",
-      content: text,
+      content: [{ type: "text", text }],
       timestamp: Date.now(),
     });
     // 大模型处理消息逻辑
     // 调用 mutate 来发送消息给大模型
-    mutate(text);
+    mutate({ message: text, model: "gemini-pro" });
+    flatListRef.current?.scrollToEnd();
+  };
+
+  const onSendMessageWithImage = (imageUrl: string, text: string) => {
+    // 发送消息逻辑
+    if (!currentSessionId) return;
+    addMessageToSession(currentSessionId, {
+      role: "user",
+      content: [
+        { type: "image_url", text: imageUrl },
+        { type: "text", text },
+      ],
+      timestamp: Date.now(),
+    });
+    // 大模型处理消息逻辑
+    // 调用 mutate 来发送消息给大模型
+    mutate({ message: text, image_url: imageUrl, model: "gemini-pro-vision" });
+    flatListRef.current?.scrollToEnd();
   };
 
   const styles = useStyles();
-
+  const markdownStyles = useMarkdownStyles();
   type ItemType = (typeof messages)[0];
+
+  function buildMarkdownMessage(
+    content: import("../store/sessionTypes").Content[]
+  ): string {
+    let result = "";
+    for (const item of content) {
+      if (item.type === "text") {
+        result += item.text;
+      } else if (item.type === "image_url") {
+        result += `![image](${item.text})`;
+      }
+    }
+    return result;
+  }
+
   const renderItem = ({ item }: { item: ItemType }) => {
     const isUserMessage = item.role === "user";
     return (
@@ -86,15 +135,47 @@ const ChatScreen = () => {
               : styles.messageReceiveBubble
           }
         >
-          <ListItem.Content style={styles.messageText}>
+          <ListItem.Content>
             <ScrollView
               contentInsetAdjustmentBehavior="automatic"
               style={{ height: "100%", width: "100%" }}
             >
-              <Markdown>{item.content}</Markdown>
+              <Markdown style={markdownStyles}>
+                {buildMarkdownMessage(item.content)}
+              </Markdown>
             </ScrollView>
           </ListItem.Content>
         </View>
+      </View>
+    );
+  };
+
+  const Loading = () => {
+    const theme = useTheme();
+    const spinValue = new Animated.Value(0);
+
+    // 在组件挂载后开始动画
+    React.useEffect(() => {
+      Animated.loop(
+        Animated.timing(spinValue, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).start();
+    }, []);
+
+    const spin = spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["0deg", "360deg"],
+    });
+
+    return (
+      <View style={styles.messageReceiveBubble}>
+        <Animated.View style={{ transform: [{ rotate: spin }] }}>
+          <ActivityIndicator size="small" color={theme.theme.colors.white} />
+        </Animated.View>
       </View>
     );
   };
@@ -107,12 +188,23 @@ const ChatScreen = () => {
         style={styles.image}
       >
         <FlatList
+          ref={flatListRef}
           data={messages}
           renderItem={renderItem}
           keyExtractor={(item) => item.timestamp.toLocaleString()}
+          ListFooterComponent={isPending ? Loading : null}
+          ListFooterComponentStyle={{
+            height: 50,
+            width: "20%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
           style={styles.list}
         />
-        <InputPanel onSendMessage={onSendMessage} />
+        <InputPanel
+          onSendMessage={onSendMessage}
+          onSendAttachmentMessage={onSendMessageWithImage}
+        />
       </ImageBackground>
     </View>
   );
@@ -141,7 +233,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
   },
   messageReceiveBubble: {
-    backgroundColor: theme.colors.grey2,
+    backgroundColor: theme.colors.success,
     borderRadius: 15,
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -153,9 +245,6 @@ const useStyles = makeStyles((theme) => ({
     paddingHorizontal: 15,
     paddingVertical: 10,
     maxWidth: "90%",
-  },
-  messageText: {
-    color: "white",
   },
 }));
 

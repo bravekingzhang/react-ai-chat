@@ -28,7 +28,7 @@
     "@tanstack/react-query": "^5.17.19",
     "@tanstack/react-query-devtools": "^5.17.21",
     "axios": "^1.6.7",
-    "expo": "~50.0.4",
+    "expo": "~50.0.5",
     "expo-constants": "~15.4.5",
     "expo-image-picker": "~14.7.1",
     "expo-linking": "~6.2.2",
@@ -48,7 +48,8 @@
     "react-native-web": "~0.19.6",
     "reactotron-react-native": "^5.0.5",
     "reactotron-react-query": "^1.0.2",
-    "zustand": "^4.5.0"
+    "zustand": "^4.5.0",
+    "expo-file-system": "~16.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
