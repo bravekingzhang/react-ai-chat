@@ -1,11 +1,4 @@
-import {
-  Icon,
-  ThemeProvider,
-  createTheme,
-  makeStyles,
-  useTheme,
-  useThemeMode,
-} from "@rneui/themed";
+import { Icon, ThemeProvider, createTheme, useTheme } from "@rneui/themed";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Stack } from "expo-router/stack";

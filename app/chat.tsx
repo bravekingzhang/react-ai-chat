@@ -19,7 +19,6 @@ import { useMutation } from "@tanstack/react-query";
 import Toast from "react-native-root-toast";
 import RenderHtml from "react-native-render-html";
 import * as showdown from "showdown";
-
 import { useMarkdownStyles } from "../styles/markdown";
 import { SessionSetting } from "../store/sessionTypes";
 
@@ -162,6 +161,7 @@ const ChatScreen = () => {
               style={{ height: "100%", width: "100%" }}
             >
               <RenderHtml
+                tagsStyles={markdownStyles}
                 source={{ html: buildHtmlMessage(item.content) }}
                 contentWidth={width * 0.8}
               ></RenderHtml>
