@@ -19,8 +19,6 @@ const ChatSettings: React.FC = () => {
     state.sessions.find((session) => session.id === currentSessionId)
   );
 
-  console.log("session", session);
-
   const [settings, setSettings] = useState<SessionSetting>(
     session?.settings || {
       model: "gpt-3.5-turbo" as ModelValues,

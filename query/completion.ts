@@ -16,7 +16,6 @@ export const fetchOpenAiCompletion = async ({
   const baseURL = useSettingsStore.getState().baseURL;
   const apiKey = useSettingsStore.getState().apiKey;
   const body = await buildBody({ message, image_url, model });
-  console.log(body);
   const response = await fetch(`${baseURL}/v1/chat/completions`, {
     method: "POST",
     headers: {
@@ -81,7 +80,6 @@ const getImageBase64 = async (filePath: string) => {
       encoding: FileSystem.EncodingType.Base64,
     })
       .then((base64) => {
-        console.log(base64);
         resolve(`data:image/png;base64,${base64}`);
       })
       .catch((err) => {
