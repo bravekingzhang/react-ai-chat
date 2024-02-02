@@ -61,6 +61,7 @@ function StackNavigator() {
               <Icon
                 name="cog"
                 type="font-awesome"
+                color={theme.theme.colors.primary}
                 onPress={() => {
                   router.navigate("setting");
                 }}
@@ -78,6 +79,7 @@ function StackNavigator() {
               <Icon
                 name="cog"
                 type="font-awesome"
+                color={theme.theme.colors.primary}
                 onPress={() => {
                   router.navigate("chatSetting");
                 }}

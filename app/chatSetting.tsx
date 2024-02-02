@@ -127,11 +127,11 @@ const ChatSettings: React.FC = () => {
           <Button
             title="Save Settings"
             onPress={handleSaveSettings}
-            containerStyle={styles.buttonContainer}
             radius={5}
             type="outline"
           />
         }
+        ListFooterComponentStyle={styles.buttonContainer}
       />
     </GestureHandlerRootView>
   );
@@ -140,6 +140,7 @@ const ChatSettings: React.FC = () => {
 const useStyles = makeStyles((theme) => ({
   container: {
     flex: 1,
+    backgroundColor: theme.colors.background,
   },
   content: {
     backgroundColor: theme.colors.grey5,

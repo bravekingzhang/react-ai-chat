@@ -136,6 +136,7 @@ const ChatScreen = () => {
     }
     const converter = new showdown.Converter();
     const html = converter.makeHtml(result);
+    console.log("html", html);
     return html;
   }
 
@@ -236,6 +237,7 @@ const ChatScreen = () => {
 const useStyles = makeStyles((theme) => ({
   container: {
     flex: 1,
+    backgroundColor: theme.colors.background,
   },
   image: {
     flex: 1,
@@ -256,14 +258,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
   },
   messageReceiveBubble: {
-    backgroundColor: theme.colors.success,
+    backgroundColor: theme.colors.black,
     borderRadius: 15,
     paddingHorizontal: 15,
     paddingVertical: 10,
     maxWidth: "90%",
   },
   messageSendBubble: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.black,
     borderRadius: 20,
     paddingHorizontal: 15,
     paddingVertical: 10,
