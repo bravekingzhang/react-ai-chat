@@ -5,9 +5,11 @@ import Attachment from "./Attachment";
 import UploadAttachment from "./UploadAttachment";
 
 const InputPanel = ({
+  showAttachment,
   onSendMessage,
   onSendAttachmentMessage,
 }: {
+  showAttachment: boolean;
   onSendMessage: (text: string) => void;
   onSendAttachmentMessage?: (imageUrl: string, text: string) => void;
 }) => {
@@ -58,11 +60,15 @@ const InputPanel = ({
           display: "none",
         }}
         leftIcon={
-          <UploadAttachment
-            onUpload={(uri, type) =>
-              setAttachments([...attachments, { uri, type }])
-            }
-          />
+          showAttachment ? (
+            <UploadAttachment
+              onUpload={(uri, type) =>
+                setAttachments([...attachments, { uri, type }])
+              }
+            />
+          ) : (
+            <></>
+          )
         }
         rightIcon={
           text.length > 0 ? (

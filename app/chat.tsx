@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   View,
   FlatList,
@@ -6,9 +6,9 @@ import {
   ActivityIndicator,
   Animated,
   Easing,
-  Image,
+  useWindowDimensions,
 } from "react-native";
-import { ListItem, Text, makeStyles, useTheme } from "@rneui/themed";
+import { ListItem, makeStyles, useTheme } from "@rneui/themed";
 import InputPanel from "../components/InputPanel"; // 确保正确导入 InputPanel 组件
 import { useLocalSearchParams } from "expo-router";
 import useSessionStore from "../store/sessionStore";
@@ -17,19 +17,18 @@ import { ImageBackground } from "react-native";
 import { fetchOpenAiCompletion } from "../query/completion";
 import { useMutation } from "@tanstack/react-query";
 import Toast from "react-native-root-toast";
-import Markdown, {
-  AstRenderer,
-  RenderFunction,
-  RenderRules,
-} from "react-native-markdown-display";
+import RenderHtml from "react-native-render-html";
+import * as showdown from "showdown";
 
 import { useMarkdownStyles } from "../styles/markdown";
+import { SessionSetting } from "../store/sessionTypes";
 
 const ChatScreen = () => {
   const { currentSessionId } = useLocalSearchParams<{
     currentSessionId?: string;
   }>();
 
+  const { width } = useWindowDimensions();
   const flatListRef = useRef<FlatList>(null);
   const { setCurrentSessionId, addMessageToSession } = useSessionStore();
 
@@ -37,8 +36,21 @@ const ChatScreen = () => {
   const session = useSessionStore((state) =>
     state.sessions.find((session) => session.id === currentSessionId)
   );
-
+  const sessionSetting = useMemo(
+    () =>
+      session?.settings || {
+        model: "gpt-3.5-turbo" as SessionSetting["model"],
+      },
+    [session?.settings]
+  );
   const messages = useMemo(() => session?.messages || [], [session?.messages]);
+
+  const showAttachment = useMemo(() => {
+    return (
+      sessionSetting.model === "gemini-pro-vision" ||
+      sessionSetting.model === "gpt-4-vision"
+    );
+  }, [sessionSetting]);
 
   useEffect(() => {
     if (currentSessionId) setCurrentSessionId(currentSessionId);
@@ -80,7 +92,10 @@ const ChatScreen = () => {
     });
     // 大模型处理消息逻辑
     // 调用 mutate 来发送消息给大模型
-    mutate({ message: text, model: "gemini-pro" });
+    mutate({
+      message: text,
+      model: sessionSetting.model as SessionSetting["model"],
+    });
     flatListRef.current?.scrollToEnd();
   };
 
@@ -97,7 +112,11 @@ const ChatScreen = () => {
     });
     // 大模型处理消息逻辑
     // 调用 mutate 来发送消息给大模型
-    mutate({ message: text, image_url: imageUrl, model: "gemini-pro-vision" });
+    mutate({
+      message: text,
+      image_url: imageUrl,
+      model: sessionSetting.model as SessionSetting["model"],
+    });
     flatListRef.current?.scrollToEnd();
   };
 
@@ -105,7 +124,7 @@ const ChatScreen = () => {
   const markdownStyles = useMarkdownStyles();
   type ItemType = (typeof messages)[0];
 
-  function buildMarkdownMessage(
+  function buildHtmlMessage(
     content: import("../store/sessionTypes").Content[]
   ): string {
     let result = "";
@@ -116,7 +135,9 @@ const ChatScreen = () => {
         result += `![image](${item.text})`;
       }
     }
-    return result;
+    const converter = new showdown.Converter();
+    const html = converter.makeHtml(result);
+    return html;
   }
 
   const renderItem = ({ item }: { item: ItemType }) => {
@@ -140,9 +161,10 @@ const ChatScreen = () => {
               contentInsetAdjustmentBehavior="automatic"
               style={{ height: "100%", width: "100%" }}
             >
-              <Markdown style={markdownStyles}>
-                {buildMarkdownMessage(item.content)}
-              </Markdown>
+              <RenderHtml
+                source={{ html: buildHtmlMessage(item.content) }}
+                contentWidth={width * 0.8}
+              ></RenderHtml>
             </ScrollView>
           </ListItem.Content>
         </View>
@@ -203,6 +225,7 @@ const ChatScreen = () => {
         />
         <InputPanel
           onSendMessage={onSendMessage}
+          showAttachment={showAttachment}
           onSendAttachmentMessage={onSendMessageWithImage}
         />
       </ImageBackground>

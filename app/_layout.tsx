@@ -38,45 +38,62 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         {Platform.OS === "web" && <ReactQueryDevtools />}
         <RootSiblingParent>
-          <Stack>
-            <Stack.Screen
-              name="index"
-              options={{
-                title: "Chats",
-                headerRight(props) {
-                  return (
-                    <Icon
-                      name="cog"
-                      type="font-awesome"
-                      onPress={() => {
-                        router.navigate("setting");
-                      }}
-                    />
-                  );
-                },
-              }}
-            />
-            <Stack.Screen
-              name="chat"
-              options={{
-                title: "Chat",
-                headerRight(props) {
-                  return (
-                    <Icon
-                      name="cog"
-                      type="font-awesome"
-                      onPress={() => {
-                        router.navigate("chatSetting");
-                      }}
-                    />
-                  );
-                },
-              }}
-            />
-            <Stack.Screen name="setting" options={{ title: "Settings" }} />
-          </Stack>
+          <StackNavigator />
         </RootSiblingParent>
       </QueryClientProvider>
     </ThemeProvider>
+  );
+}
+
+function StackNavigator() {
+  const theme = useTheme();
+  return (
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.theme.colors.background,
+        },
+        headerTintColor: theme.theme.colors.primary,
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <Stack.Screen
+        name="index"
+        options={{
+          title: "Chats",
+          headerRight(props) {
+            return (
+              <Icon
+                name="cog"
+                type="font-awesome"
+                onPress={() => {
+                  router.navigate("setting");
+                }}
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="chat"
+        options={{
+          title: "Chat",
+          headerRight(props) {
+            return (
+              <Icon
+                name="cog"
+                type="font-awesome"
+                onPress={() => {
+                  router.navigate("chatSetting");
+                }}
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen name="setting" options={{ title: "Settings" }} />
+    </Stack>
   );
 }

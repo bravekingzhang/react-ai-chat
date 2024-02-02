@@ -23,6 +23,7 @@ export interface Content {
 export const Model = {
   Gpt3_5Turbo: "gpt-3.5-turbo",
   Gpt4: "gpt-4",
+  Gpt4Vision: "gpt-4-vision",
   GeminiPro: "gemini-pro",
   GeminiProVision: "gemini-pro-vision",
 } as const;
@@ -31,7 +32,7 @@ export type ModelKeys = keyof typeof Model;
 
 export type ModelValues = (typeof Model)[ModelKeys];
 export interface SessionSetting {
-  model: ModelKeys;
+  model: ModelValues;
   temperature: number;
   max_tokens: number;
   top_p: number;
@@ -39,7 +40,12 @@ export interface SessionSetting {
   presence_penalty: number;
 }
 
-export function getModelOptions(): { label: string; value: string }[] {
+export interface ModelOption {
+  label: string;
+  value: string;
+}
+
+export function getModelOptions(): ModelOption[] {
   return Object.values(Model).map((model) => ({ label: model, value: model }));
 }
 export interface Session {

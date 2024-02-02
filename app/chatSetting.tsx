@@ -5,7 +5,8 @@ import { Picker } from "@react-native-picker/picker";
 import { ListItem, Button, Input, makeStyles } from "@rneui/themed";
 import useChatSessionStore from "../store/sessionStore";
 import {
-  ModelKeys,
+  ModelOption,
+  ModelValues,
   SessionSetting,
   getModelOptions,
 } from "../store/sessionTypes";
@@ -22,7 +23,7 @@ const ChatSettings: React.FC = () => {
 
   const [settings, setSettings] = useState<SessionSetting>(
     session?.settings || {
-      model: "gpt-3.5-turbo" as ModelKeys,
+      model: "gpt-3.5-turbo" as ModelValues,
       temperature: 0.7,
       max_tokens: 100,
       top_p: 1,
@@ -61,7 +62,14 @@ const ChatSettings: React.FC = () => {
 
   const styles = useStyles();
 
-  const renderItem = ({ item }) => {
+  type SettingItem = {
+    key: string;
+    label: string;
+    type: string;
+    options?: ModelOption[];
+  };
+
+  const renderItem = ({ item }: { item: SettingItem }) => {
     switch (item.type) {
       case "picker":
         return (
@@ -69,11 +77,15 @@ const ChatSettings: React.FC = () => {
             <ListItem.Content style={styles.content}>
               <ListItem.Title>{item.label}</ListItem.Title>
               <Picker
-                selectedValue={settings[item.key]}
-                onValueChange={(value) => updateSetting(item.key, value)}
+                selectedValue={
+                  settings[item.key as keyof SessionSetting] as ModelValues
+                }
+                onValueChange={(value) =>
+                  updateSetting(item.key as keyof SessionSetting, value)
+                }
                 style={styles.picker}
               >
-                {item.options.map((option) => (
+                {item?.options?.map((option) => (
                   <Picker.Item
                     label={option.label}
                     value={option.value}
@@ -90,8 +102,10 @@ const ChatSettings: React.FC = () => {
             <ListItem.Content style={styles.content}>
               <ListItem.Title style={styles.title}>{item.label}</ListItem.Title>
               <Input
-                onChangeText={(value) => updateSetting(item.key, value)}
-                value={settings[item.key]?.toString()}
+                onChangeText={(value) =>
+                  updateSetting(item.key as keyof SessionSetting, value as any)
+                }
+                value={settings[item.key as keyof SessionSetting]?.toString()}
                 keyboardType="numeric"
                 containerStyle={styles.inputContainer}
                 inputContainerStyle={styles.input}
