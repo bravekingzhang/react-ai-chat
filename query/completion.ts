@@ -126,3 +126,18 @@ const getImageBase64 = async (filePath: string) => {
       });
   });
 };
+
+const renameSession = async (id: string, name: string) => {
+  const session = useSessionStore
+    .getState()
+    .sessions.find((session) => session.id === id);
+  if (!session) {
+    return;
+  }
+  session.name = name;
+  useSessionStore.setState({
+    sessions: useSessionStore
+      .getState()
+      .sessions.map((s) => (s.id === id ? session : s)),
+  });
+};
