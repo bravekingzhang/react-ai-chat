@@ -1,13 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import {
-  View,
-  FlatList,
-  ScrollView,
-  ActivityIndicator,
-  Animated,
-  Easing,
-  useWindowDimensions,
-} from "react-native";
+import { View, FlatList, ScrollView, useWindowDimensions } from "react-native";
 import { ListItem, makeStyles, useTheme } from "@rneui/themed";
 import InputPanel from "../components/InputPanel"; // 确保正确导入 InputPanel 组件
 import { useLocalSearchParams } from "expo-router";
@@ -17,10 +9,10 @@ import { ImageBackground } from "react-native";
 import { fetchOpenAiCompletion } from "../query/completion";
 import { useMutation } from "@tanstack/react-query";
 import Toast from "react-native-root-toast";
-import RenderHtml from "react-native-render-html";
-import * as showdown from "showdown";
-import { useMarkdownStyles } from "../styles/markdown";
+
 import { SessionSetting } from "../store/sessionTypes";
+import HtmlView from "../components/HtmlView";
+import MessageLoading from "../components/MessageLoading";
 
 const ChatScreen = () => {
   const { currentSessionId } = useLocalSearchParams<{
@@ -120,25 +112,7 @@ const ChatScreen = () => {
   };
 
   const styles = useStyles();
-  const markdownStyles = useMarkdownStyles();
   type ItemType = (typeof messages)[0];
-
-  function buildHtmlMessage(
-    content: import("../store/sessionTypes").Content[]
-  ): string {
-    let result = "";
-    for (const item of content) {
-      if (item.type === "text") {
-        result += item.text;
-      } else if (item.type === "image_url") {
-        result += `![image](${item.text})`;
-      }
-    }
-    const converter = new showdown.Converter();
-    const html = converter.makeHtml(result);
-    console.log("html", html);
-    return html;
-  }
 
   const renderItem = ({ item }: { item: ItemType }) => {
     const isUserMessage = item.role === "user";
@@ -161,44 +135,10 @@ const ChatScreen = () => {
               contentInsetAdjustmentBehavior="automatic"
               style={{ height: "100%", width: "100%" }}
             >
-              <RenderHtml
-                tagsStyles={markdownStyles}
-                source={{ html: buildHtmlMessage(item.content) }}
-                contentWidth={width * 0.8}
-              ></RenderHtml>
+              <HtmlView contents={item.content} width={width * 0.8} />
             </ScrollView>
           </ListItem.Content>
         </View>
-      </View>
-    );
-  };
-
-  const Loading = () => {
-    const theme = useTheme();
-    const spinValue = new Animated.Value(0);
-
-    // 在组件挂载后开始动画
-    React.useEffect(() => {
-      Animated.loop(
-        Animated.timing(spinValue, {
-          toValue: 1,
-          duration: 2000,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        })
-      ).start();
-    }, []);
-
-    const spin = spinValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["0deg", "360deg"],
-    });
-
-    return (
-      <View style={styles.messageReceiveBubble}>
-        <Animated.View style={{ transform: [{ rotate: spin }] }}>
-          <ActivityIndicator size="small" color={theme.theme.colors.white} />
-        </Animated.View>
       </View>
     );
   };
@@ -215,7 +155,7 @@ const ChatScreen = () => {
           data={messages}
           renderItem={renderItem}
           keyExtractor={(item) => item.timestamp.toLocaleString()}
-          ListFooterComponent={isPending ? Loading : null}
+          ListFooterComponent={isPending ? <MessageLoading /> : null}
           ListFooterComponentStyle={{
             height: 50,
             width: "20%",
@@ -258,17 +198,19 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
   },
   messageReceiveBubble: {
-    backgroundColor: theme.colors.black,
-    borderRadius: 15,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    borderColor: theme.colors.greyOutline,
+    backgroundColor: theme.colors.background,
+    borderWidth: 0.5,
+    borderRadius: 10,
+    paddingHorizontal: 10,
     maxWidth: "90%",
   },
   messageSendBubble: {
-    backgroundColor: theme.colors.black,
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    borderColor: theme.colors.greyOutline,
+    backgroundColor: theme.colors.background,
+    borderWidth: 0.5,
+    borderRadius: 10,
+    paddingHorizontal: 10,
     maxWidth: "90%",
   },
 }));
