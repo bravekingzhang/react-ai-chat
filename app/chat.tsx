@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { View, FlatList, ScrollView, useWindowDimensions } from "react-native";
-import { ListItem, makeStyles, useTheme } from "@rneui/themed";
+import { ListItem, makeStyles } from "@rneui/themed";
 import InputPanel from "../components/InputPanel"; // 确保正确导入 InputPanel 组件
 import { useLocalSearchParams } from "expo-router";
 import useSessionStore from "../store/sessionStore";
@@ -84,10 +84,8 @@ const ChatScreen = () => {
     // 大模型处理消息逻辑
     // 调用 mutate 来发送消息给大模型
     mutate({
+      id: currentSessionId,
       message: text,
-      history: messages,
-      model: sessionSetting.model as SessionSetting["model"],
-      temperature: sessionSetting.temperature,
     });
     flatListRef.current?.scrollToEnd();
   };
@@ -106,10 +104,9 @@ const ChatScreen = () => {
     // 大模型处理消息逻辑
     // 调用 mutate 来发送消息给大模型
     mutate({
+      id: currentSessionId,
       message: text,
       image_url: imageUrl,
-      history: messages,
-      model: sessionSetting.model as SessionSetting["model"],
     });
     flatListRef.current?.scrollToEnd();
   };

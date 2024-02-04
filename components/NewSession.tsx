@@ -2,7 +2,8 @@
 import React from "react";
 import useSessionStore from "../store/sessionStore";
 import { FAB, makeStyles } from "@rneui/themed";
-import { Model, ModelKeys } from "../store/sessionTypes";
+import { ModelValues } from "../store/sessionTypes";
+import { router } from "expo-router";
 
 const NewSession: React.FC = () => {
   const createSession = useSessionStore((state) => state.createSession);
@@ -10,11 +11,12 @@ const NewSession: React.FC = () => {
   const styles = useStyles();
 
   const handleCreateSession = () => {
+    const currentSessionId = Date.now().toString(); // 使用字符串 ID
     const newSession = {
-      id: Date.now().toString(), // 使用字符串 ID
-      name: "闲聊",
+      id: currentSessionId,
+      name: "",
       settings: {
-        model: "gpt-3.5-turbo" as ModelKeys,
+        model: "gpt-3.5-turbo" as ModelValues,
         temperature: 0.9,
         top_p: 1,
         max_tokens: 150,
@@ -24,6 +26,10 @@ const NewSession: React.FC = () => {
       messages: [],
     };
     createSession(newSession);
+    router.navigate({
+      pathname: "/chat",
+      params: { currentSessionId },
+    });
   };
 
   return (

@@ -7,7 +7,6 @@ import useSessionStore from "../store/sessionStore";
 import NewSession from "../components/NewSession";
 import { router } from "expo-router";
 import { ListItemSubtitle } from "@rneui/base/dist/ListItem/ListItem.Subtitle";
-import { ListItemContent } from "@rneui/base/dist/ListItem/ListItem.Content";
 
 const Sessions = () => {
   const sessions = useSessionStore((state) => state.sessions);
@@ -43,7 +42,7 @@ const Sessions = () => {
           >
             <ListItem.Content>
               <ListItem.Title>
-                <Text>{item.name}</Text>
+                <Text>{item.name ? item.name : "未命名对话"}</Text>
               </ListItem.Title>
               <ListItemSubtitle>
                 <Text>{item.messages.length} messages</Text>

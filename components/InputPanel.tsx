@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { View } from "react-native";
-import { Input, Button, Icon, makeStyles, Text } from "@rneui/themed";
+import React, { useState, useRef } from "react";
+import { View, Keyboard } from "react-native";
+import { Input, Icon, makeStyles, InputProps } from "@rneui/themed";
 import Attachment from "./Attachment";
 import UploadAttachment from "./UploadAttachment";
 
@@ -15,6 +15,7 @@ const InputPanel = ({
 }) => {
   const [text, setText] = useState("");
 
+  // const inputRef = React.createRef<any>();
   type AttachmentType = {
     uri: string;
     type: string;
@@ -32,6 +33,8 @@ const InputPanel = ({
       : onSendAttachmentMessage?.(attachments[0].uri, text);
     setText("");
     setAttachments([]);
+    // inputRef.current?.blue();
+    Keyboard.dismiss();
   };
 
   return (
@@ -49,6 +52,7 @@ const InputPanel = ({
         ))}
       </View>
       <Input
+        // ref={inputRef}
         placeholder="Type a message..."
         value={text}
         multiline
