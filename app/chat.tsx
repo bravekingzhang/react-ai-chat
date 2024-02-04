@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { View, FlatList, ScrollView, useWindowDimensions } from "react-native";
-import { ListItem, makeStyles } from "@rneui/themed";
+import { ListItem, makeStyles, useTheme } from "@rneui/themed";
 import InputPanel from "../components/InputPanel"; // 确保正确导入 InputPanel 组件
 import { useLocalSearchParams } from "expo-router";
 import useSessionStore from "../store/sessionStore";
@@ -13,6 +13,7 @@ import Toast from "react-native-root-toast";
 import { SessionSetting } from "../store/sessionTypes";
 import HtmlView from "../components/HtmlView";
 import MessageLoading from "../components/MessageLoading";
+import { markdownStyles } from "../styles/markdown";
 
 const ChatScreen = () => {
   const { currentSessionId } = useLocalSearchParams<{
@@ -135,7 +136,11 @@ const ChatScreen = () => {
               contentInsetAdjustmentBehavior="automatic"
               style={{ height: "100%", width: "100%" }}
             >
-              <HtmlView contents={item.content} width={width * 0.8} />
+              <HtmlView
+                contents={item.content}
+                width={width * 0.8}
+                markdownStyles={markdownStyles}
+              />
             </ScrollView>
           </ListItem.Content>
         </View>

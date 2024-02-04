@@ -1,23 +1,22 @@
-import React from "react";
+import React, { useMemo } from "react";
 import RenderHtml from "react-native-render-html";
 import * as showdown from "showdown";
-import { makeStyles } from "@rneui/themed";
-import { Platform } from "react-native";
 
 import { Content } from "../store/sessionTypes";
-
 export default function HtmlView({
   contents,
   width,
+  markdownStyles,
 }: {
   contents: Content[];
   width: number;
+  markdownStyles: any;
 }) {
-  const markdownStyles = useMarkdownStyles();
+  const html = useMemo(() => buildHtmlMessage(contents), contents);
   return (
     <RenderHtml
       tagsStyles={markdownStyles}
-      source={{ html: buildHtmlMessage(contents) }}
+      source={{ html: html }}
       contentWidth={width * 0.8}
     ></RenderHtml>
   );
@@ -36,34 +35,3 @@ function buildHtmlMessage(contents: Content[]): string {
   const html = converter.makeHtml(result);
   return html;
 }
-
-// this is converted to a stylesheet internally at run time with StyleSheet.create(
-const useMarkdownStyles = makeStyles((theme) => ({
-  // Believe these are never used but retained for completeness
-  pre: {
-    backgroundColor: "#f5f5f5",
-    padding: 10,
-    borderRadius: 4,
-    ...Platform.select({
-      ["ios"]: {
-        fontFamily: "Courier",
-      },
-      ["android"]: {
-        fontFamily: "monospace",
-      },
-    }),
-  },
-  code: {
-    fontFamily: "monospace",
-  },
-  p: {
-    color: theme.colors.black,
-  },
-  img: {
-    width: "100%",
-    height: 200,
-    resizeMode: "cover",
-  },
-  inline: {},
-  span: {},
-}));
