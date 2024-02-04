@@ -31,6 +31,7 @@ const ChatScreen = () => {
     () =>
       session?.settings || {
         model: "gpt-3.5-turbo" as SessionSetting["model"],
+        temperature: 0.7 as SessionSetting["temperature"],
       },
     [session?.settings]
   );
@@ -75,7 +76,6 @@ const ChatScreen = () => {
   const onSendMessage = (text: string) => {
     // 发送消息逻辑
     if (!currentSessionId) return;
-    console.log("Sending Text: ", text);
     addMessageToSession(currentSessionId, {
       role: "user",
       content: [{ type: "text", text }],
@@ -85,7 +85,9 @@ const ChatScreen = () => {
     // 调用 mutate 来发送消息给大模型
     mutate({
       message: text,
+      history: messages,
       model: sessionSetting.model as SessionSetting["model"],
+      temperature: sessionSetting.temperature,
     });
     flatListRef.current?.scrollToEnd();
   };
@@ -106,6 +108,7 @@ const ChatScreen = () => {
     mutate({
       message: text,
       image_url: imageUrl,
+      history: messages,
       model: sessionSetting.model as SessionSetting["model"],
     });
     flatListRef.current?.scrollToEnd();

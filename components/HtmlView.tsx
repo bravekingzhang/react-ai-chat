@@ -34,7 +34,6 @@ function buildHtmlMessage(contents: Content[]): string {
   }
   const converter = new showdown.Converter();
   const html = converter.makeHtml(result);
-  console.log("html", html);
   return html;
 }
 
