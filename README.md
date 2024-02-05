@@ -30,6 +30,22 @@ npx expo start
 npx expo install --fix
 ```
 
+### build
+
+现参考[打包Android端](https://docs.expo.dev/build-reference/apk/)，随后执行
+
+```sh
+eas build -p android --profile preview
+```
+功能貌似也不怎么复杂，打出了一个 66m 的包，应该是有优化空间的。expo 打包 默认应该是全部架构的 so 都放进去了。
+
+
+先参考 [打包 iOS端](https://docs.expo.dev/build-reference/simulators/) ，随后执行
+
+```sh
+eas build -p ios --profile preview
+```
+
 ### 关于
 直接对接[one-api](https://github.com/songquanpeng/one-api/issues)，应该是最爽的姿势了，不需要对每一种模型做适配，只适配 openAI 的接口就 ok 了。
 
