@@ -3,42 +3,43 @@ import RenderHtml from "react-native-render-html";
 import * as showdown from "showdown";
 
 import { Content } from "../store/sessionTypes";
-import { useTheme } from "@rneui/themed";
+import { ColorValue } from "react-native";
 export default function HtmlView({
   contents,
   width,
-  markdownStyles,
+  color,
 }: {
   contents: Content[];
   width: number;
-  markdownStyles: any;
+  color: ColorValue;
 }) {
   const html = useMemo(() => buildHtmlMessage(contents), contents);
-  const theme = useTheme();
-  const black = useMemo(() => theme.theme.colors.black, []);
+  const tagsStyles = React.useMemo(
+    () => ({
+      // Believe these are never used but retained for completeness
+      pre: {
+        backgroundColor: "#f5f5f5",
+        padding: 10,
+        borderRadius: 4,
+      },
+      code: {
+        fontFamily: "monospace",
+      },
+      p: {
+        color: color,
+      },
+      img: {
+        width: "100%",
+        height: 200,
+      },
+      inline: {},
+      span: {},
+    }),
+    [color]
+  );
   return (
     <RenderHtml
-      tagsStyles={{
-        // Believe these are never used but retained for completeness
-        pre: {
-          backgroundColor: "#f5f5f5",
-          padding: 10,
-          borderRadius: 4,
-        },
-        code: {
-          fontFamily: "monospace",
-        },
-        p: {
-          color: black,
-        },
-        img: {
-          width: "100%",
-          height: 200,
-          resizeMode: "cover",
-        },
-        inline: {},
-        span: {},
-      }}
+      tagsStyles={tagsStyles}
       source={{ html: html }}
       contentWidth={width * 0.8}
     ></RenderHtml>

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { View, FlatList, ScrollView, useWindowDimensions } from "react-native";
 import { Icon, ListItem, makeStyles, Text } from "@rneui/themed";
 import InputPanel from "../components/InputPanel"; // 确保正确导入 InputPanel 组件
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import useSessionStore from "../store/sessionStore";
 import { ImageBackground } from "react-native";
 
@@ -22,7 +22,7 @@ const ChatScreen = () => {
   const { width } = useWindowDimensions();
   const flatListRef = useRef<FlatList>(null);
   const { setCurrentSessionId, addMessageToSession } = useSessionStore();
-
+  const navigation = useNavigation();
   // 取出当前会话的session
   const session = useSessionStore((state) =>
     state.sessions.find((session) => session.id === currentSessionId)
@@ -46,6 +46,11 @@ const ChatScreen = () => {
 
   useEffect(() => {
     if (currentSessionId) setCurrentSessionId(currentSessionId);
+    navigation.setOptions({
+      title:
+        session?.name + "(" + session?.settings.model + ")" ||
+        "与" + session?.settings.model + "对话",
+    });
   }, [currentSessionId]);
 
   // 设置 useMutation 钩子
@@ -151,7 +156,11 @@ const ChatScreen = () => {
               contentInsetAdjustmentBehavior="automatic"
               style={{ height: "100%", width: "100%" }}
             >
-              <HtmlView contents={item.content} width={width * 0.8} />
+              <HtmlView
+                contents={item.content}
+                width={width * 0.8}
+                color={styles.messageColor.color}
+              />
             </ScrollView>
           </ListItem.Content>
         </View>
@@ -213,6 +222,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     marginVertical: 4,
     paddingHorizontal: 10,
+  },
+  messageColor: {
+    color: theme.colors.black,
   },
   userMessage: {
     flexDirection: "row-reverse",
