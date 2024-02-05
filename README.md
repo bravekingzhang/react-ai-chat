@@ -35,6 +35,7 @@ npx expo install --fix
 
 ### 加群讨论
 欢迎加群讨论技术
+
 <img width="200" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/7c457992-a0bc-49a3-9bd6-f23b5f1a595e">
 
 ## todo
