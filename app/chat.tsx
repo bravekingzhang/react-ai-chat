@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { View, FlatList, ScrollView, useWindowDimensions } from "react-native";
-import { ListItem, makeStyles, useTheme } from "@rneui/themed";
+import { Icon, ListItem, makeStyles, Text } from "@rneui/themed";
 import InputPanel from "../components/InputPanel"; // 确保正确导入 InputPanel 组件
 import { useLocalSearchParams } from "expo-router";
 import useSessionStore from "../store/sessionStore";
@@ -13,7 +13,6 @@ import Toast from "react-native-root-toast";
 import { SessionSetting } from "../store/sessionTypes";
 import HtmlView from "../components/HtmlView";
 import MessageLoading from "../components/MessageLoading";
-import { markdownStyles } from "../styles/markdown";
 
 const ChatScreen = () => {
   const { currentSessionId } = useLocalSearchParams<{
@@ -124,6 +123,22 @@ const ChatScreen = () => {
           isUserMessage ? styles.userMessage : styles.receivedMessage,
         ]}
       >
+        <View style={styles.messageAvatar}>
+          {item.role === "user" ? (
+            <Icon
+              name="user"
+              type="font-awesome-5"
+              color={styles.userMessage.color}
+            />
+          ) : (
+            <Icon
+              name="robot"
+              type="font-awesome-5"
+              color={styles.receivedMessage.color}
+            />
+          )}
+        </View>
+
         <View
           style={
             isUserMessage
@@ -136,11 +151,7 @@ const ChatScreen = () => {
               contentInsetAdjustmentBehavior="automatic"
               style={{ height: "100%", width: "100%" }}
             >
-              <HtmlView
-                contents={item.content}
-                width={width * 0.8}
-                markdownStyles={markdownStyles}
-              />
+              <HtmlView contents={item.content} width={width * 0.8} />
             </ScrollView>
           </ListItem.Content>
         </View>
@@ -190,6 +201,13 @@ const useStyles = makeStyles((theme) => ({
   },
   list: {
     flex: 1,
+    paddingVertical: theme.spacing.lg,
+  },
+  messageAvatar: {
+    width: 30,
+    height: 30,
+    marginHorizontal: 3,
+    borderRadius: 10,
   },
   messageContainer: {
     flexDirection: "row",
@@ -197,10 +215,12 @@ const useStyles = makeStyles((theme) => ({
     paddingHorizontal: 10,
   },
   userMessage: {
-    justifyContent: "flex-end",
+    flexDirection: "row-reverse",
+    color: theme.colors.primary,
   },
   receivedMessage: {
-    justifyContent: "flex-start",
+    flexDirection: "row",
+    color: theme.colors.secondary,
   },
   messageReceiveBubble: {
     borderColor: theme.colors.greyOutline,
@@ -212,7 +232,7 @@ const useStyles = makeStyles((theme) => ({
   },
   messageSendBubble: {
     borderColor: theme.colors.greyOutline,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.success,
     borderWidth: 0.5,
     borderRadius: 10,
     paddingHorizontal: 10,

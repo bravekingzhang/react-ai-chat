@@ -50,6 +50,7 @@ function StackNavigator() {
         headerTitleStyle: {
           fontWeight: "bold",
         },
+        statusBarColor: theme.theme.colors.primary,
       }}
     >
       <Stack.Screen

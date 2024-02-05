@@ -36,6 +36,7 @@ const NewSession: React.FC = () => {
     <FAB
       icon={{ name: "add", color: styles.container.backgroundColor }}
       onPress={handleCreateSession}
+      color={styles.fabStyle.color}
       style={styles.fabStyle}
     />
   );

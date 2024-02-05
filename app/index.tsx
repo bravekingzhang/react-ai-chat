@@ -7,6 +7,8 @@ import useSessionStore from "../store/sessionStore";
 import NewSession from "../components/NewSession";
 import { router } from "expo-router";
 import { ListItemSubtitle } from "@rneui/base/dist/ListItem/ListItem.Subtitle";
+import { ListItemContent } from "@rneui/base/dist/ListItem/ListItem.Content";
+import { Message } from "../store/sessionTypes";
 
 const Sessions = () => {
   const sessions = useSessionStore((state) => state.sessions);
@@ -41,12 +43,20 @@ const Sessions = () => {
             )}
           >
             <ListItem.Content>
+              <View style={styles.model}>
+                <Text>{item.settings.model}</Text>
+              </View>
               <ListItem.Title>
-                <Text>{item.name ? item.name : "未命名对话"}</Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {item.name ? item.name : "未命名对话"}
+                </Text>
               </ListItem.Title>
-              <ListItemSubtitle>
-                <Text>{item.messages.length} messages</Text>
-              </ListItemSubtitle>
+              <ListItemContent>
+                <View style={styles.content}>
+                  <Text>{item.messages.length} 条消息</Text>
+                  <Text>{getLastMessageTimestamp(item.messages)}</Text>
+                </View>
+              </ListItemContent>
             </ListItem.Content>
           </ListItem.Swipeable>
         )}
@@ -60,10 +70,36 @@ const Sessions = () => {
   );
 };
 
-const useStyles = makeStyles((theme) => ({
+const getLastMessageTimestamp = (messages: Message[]): string => {
+  if (messages.length === 0) {
+    return "未开始";
+  }
+  const lastMessage = messages[messages.length - 1];
+  return new Date(lastMessage?.timestamp).toLocaleString();
+};
+
+const useStyles = makeStyles((theme, props: { model: string }) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+  },
+  model: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    borderColor: theme.colors.primary,
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 2,
+    paddingHorizontal: 5,
+    alignItems: "center",
+  },
+  content: {
+    width: "100%",
+    flexDirection: "row",
+    marginTop: 8,
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   list: {
     flex: 1,
