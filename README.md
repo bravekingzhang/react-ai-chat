@@ -4,7 +4,7 @@
 
 <img width="150" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/35fba279-4a0d-498f-ae36-451c23779058">
 
-<img width="150" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/35fba279-4a0d-498f-ae36-451c23779058">
+<img width="150" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/11091d71-88ad-4ec2-8e3a-e5ed4f3c3182">
 
 <img width="150" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/6cbb3a66-b058-4a86-bb4e-8046498ffdf9">
 
@@ -45,6 +45,6 @@ npx expo install --fix
 - [ ] 支持 markdown 代码着色
 - [x] 支持显示 markdown，markdown 显示本地图片。
 - [x] 支持命名对话+自动命名对话
-- [x] 支持识别图片的模型如 gpt-4-vision or gemini-pro-vision
+- [x] 支持识别图片的模型如 gpt-4-vision or gemini-pro-vision，该模型下会出现上传附件📎的按钮
 - [x] 支持管理会话、本地会话存储
 - [x] 支持切换主题词，dark/light 模式
