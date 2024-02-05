@@ -33,8 +33,9 @@ npx expo install --fix
 ### 关于
 直接对接[one-api](https://github.com/songquanpeng/one-api/issues)，应该是最爽的姿势了，不需要对每一种模型做适配，只适配 openAI 的接口就 ok 了。
 
+
 ### 加群讨论
-欢迎加群讨论技术
+欢迎加群讨论技术？随意打赏，请备注 github 名
 
 <img width="200" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/7c457992-a0bc-49a3-9bd6-f23b5f1a595e">
 
