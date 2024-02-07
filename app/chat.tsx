@@ -40,7 +40,7 @@ const ChatScreen = () => {
   const showAttachment = useMemo(() => {
     return (
       sessionSetting.model === "gemini-pro-vision" ||
-      sessionSetting.model === "gpt-4-vision"
+      sessionSetting.model === "gpt-4-vision-preview"
     );
   }, [sessionSetting]);
 
@@ -210,7 +210,7 @@ const useStyles = makeStyles((theme) => ({
   },
   list: {
     flex: 1,
-    paddingVertical: theme.spacing.lg,
+    marginTop: 5,
   },
   messageAvatar: {
     width: 30,

@@ -27,6 +27,8 @@ const ChatSettings: React.FC = () => {
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
+      auto_press: true,
+      max_length_history_message: 4,
     }
   );
 
@@ -34,6 +36,7 @@ const ChatSettings: React.FC = () => {
     key: K,
     value: SessionSetting[K]
   ) => {
+    console.log(`updateSetting: ${key} = ${value}`);
     setSettings((prevSettings) => ({ ...prevSettings, [key]: value }));
   };
 
@@ -51,11 +54,25 @@ const ChatSettings: React.FC = () => {
       type: "picker",
       options: getModelOptions(),
     },
-    { key: "temperature", label: "Temperature", type: "input" },
-    { key: "max_tokens", label: "Max Tokens", type: "input" },
+    { key: "temperature", label: "模型温度，越高就越随机", type: "input" },
+    { key: "max_tokens", label: "回复最大的字符数", type: "input" },
     { key: "top_p", label: "Top P", type: "input" },
-    { key: "frequency_penalty", label: "Frequency Penalty", type: "input" },
-    { key: "presence_penalty", label: "Presence Penalty", type: "input" },
+    {
+      key: "frequency_penalty",
+      label: "值越大，越可能降低重复词",
+      type: "input",
+    },
+    {
+      key: "presence_penalty",
+      label: "值越大，越可能扩展到新的话题",
+      type: "input",
+    },
+    { key: "auto_press", label: "自动压缩历史对话", type: "switch" },
+    {
+      key: "max_length_history_message",
+      label: "携带历史对话最大长度",
+      type: "input",
+    },
   ];
 
   const styles = useStyles();
@@ -91,6 +108,23 @@ const ChatSettings: React.FC = () => {
                   />
                 ))}
               </Picker>
+            </ListItem.Content>
+          </ListItem>
+        );
+      case "switch":
+        return (
+          <ListItem bottomDivider>
+            <ListItem.Content style={styles.content}>
+              <ListItem.Title style={styles.title}>{item.label}</ListItem.Title>
+              <ListItem.CheckBox
+                checked={settings[item.key as keyof SessionSetting] as boolean}
+                onPress={() =>
+                  updateSetting(
+                    item.key as keyof SessionSetting,
+                    !settings[item.key as keyof SessionSetting]
+                  )
+                }
+              />
             </ListItem.Content>
           </ListItem>
         );

@@ -22,7 +22,15 @@ export const fetchOpenAiCompletion = async ({
   const model = session?.settings.model ?? "gpt-3.5-turbo";
   const history = session?.messages ?? [];
   const historyCopy = JSON.parse(JSON.stringify(history)) as Message[];
+  //历史消息不包含用户刚怼入的消息
   historyCopy.pop();
+  const max_length_history_message =
+    useSessionStore.getState().sessions.find((s) => s.id === id)?.settings
+      .max_length_history_message ?? 4;
+  // 拿到最后 max_length_history_message 条消息
+  historyCopy.splice(0, historyCopy.length - max_length_history_message);
+
+  console.log("携带了", historyCopy.length, "条消息");
   const temperature = session?.settings.temperature ?? 0.5;
   const body = await buildBody({
     message,
@@ -72,7 +80,7 @@ const buildBody = async ({
     return JSON.stringify({
       model: model,
       messages: [
-        // 仅在非gemini-pro-vision模型下，将历史消息转换为文本，貌似 gpt4-vision 支持历史消息?
+        // 仅在非gemini-pro-vision模型下，将历史消息转换为文本，貌似 gpt-4-vision-preview 支持历史消息?
         ...(model != "gemini-pro-vision"
           ? convertHistoryToMessages(history)
           : []),
@@ -156,7 +164,7 @@ const renameSession = async (
       messages: [
         {
           role: "system",
-          content: `你擅长给对话取主题，请基于以下内容，取个8字左右的主题`,
+          content: `使用四到五个字直接返回这句话的简要主题，不要解释、不要标点、不要语气词、不要多余文本，如果没有主题，请直接返回“闲聊”`,
         },
         ...renameMessageContext,
       ],
@@ -172,7 +180,7 @@ const renameSession = async (
     if (!session) {
       return;
     }
-    session.name = name.replace(/\"/g, "");
+    session.name = name.replace(/["「」]/g, "");
     useSessionStore.setState({
       sessions: useSessionStore
         .getState()

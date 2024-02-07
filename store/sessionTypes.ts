@@ -23,7 +23,7 @@ export interface Content {
 export const Model = {
   Gpt3_5Turbo: "gpt-3.5-turbo",
   Gpt4: "gpt-4",
-  Gpt4Vision: "gpt-4-vision",
+  Gpt4Vision: "gpt-4-vision-preview",
   GeminiPro: "gemini-pro",
   GeminiProVision: "gemini-pro-vision",
 } as const;
@@ -38,6 +38,8 @@ export interface SessionSetting {
   top_p: number;
   frequency_penalty: number;
   presence_penalty: number;
+  auto_press: boolean;
+  max_length_history_message: number;
 }
 
 export interface ModelOption {

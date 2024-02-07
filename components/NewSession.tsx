@@ -22,6 +22,8 @@ const NewSession: React.FC = () => {
         max_tokens: 150,
         frequency_penalty: 0,
         presence_penalty: 0,
+        auto_press: true,
+        max_length_history_message: 4,
       }, // 定义具体的设置
       messages: [],
     };
